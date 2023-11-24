@@ -1,13 +1,17 @@
+import os
+
 import pandas as pd
 import glob
 # glob is useful here for lists with multiple files
 from fpdf import FPDF
 from pathlib import Path
+
+
 # helps with using filepaths
 
 
-def generate(invoices_path, pdfs_path):
-    filepaths = glob.glob("invoices/*.xlsx")
+def generate(invoices_path, pdfs_path, image_path, product_id, product_name, amount_purchased, price_per_unit, total_price):
+    filepaths = glob.glob(f"{invoices_path}/*.xlsx")
     print(filepaths)
 
     for filepath in filepaths:
@@ -31,7 +35,7 @@ def generate(invoices_path, pdfs_path):
         df = pd.read_excel(filepath, sheet_name="Sheet 1")
 
         columns = list(df.columns)
-        #converted to list from object type
+        # converted to list from object type
         columns = [item.replace("_", " ").title() for item in columns]
         pdf.set_font(family="Times", size=10, style="B")
         pdf.set_text_color(80, 80, 80)
@@ -44,16 +48,16 @@ def generate(invoices_path, pdfs_path):
         for index, row in df.iterrows():
             pdf.set_font(family="Times", size=10)
             pdf.set_text_color(80, 80, 80)
-            pdf.cell(w=30, h=8, txt=str(row["product_id"]), border=1)
-            pdf.cell(w=70, h=8, txt=str(row["product_name"]), border=1)
-            pdf.cell(w=30, h=8, txt=str(row["amount_purchased"]), border=1)
-            pdf.cell(w=30, h=8, txt=str(row["price_per_unit"]), border=1)
-            pdf.cell(w=30, h=8, txt=str(row["total_price"]), border=1, ln=1)
-    #str here is to convert integer values to string
-    # because they are used in a replace() function
-    # and ints cant be used with that function
+            pdf.cell(w=30, h=8, txt=str(row[product_id]), border=1)
+            pdf.cell(w=70, h=8, txt=str(row[product_name]), border=1)
+            pdf.cell(w=30, h=8, txt=str(row[amount_purchased]), border=1)
+            pdf.cell(w=30, h=8, txt=str(row[price_per_unit]), border=1)
+            pdf.cell(w=30, h=8, txt=str(row[total_price]), border=1, ln=1)
+        # str here is to convert integer values to string
+        # because they are used in a replace() function
+        # and ints cant be used with that function
 
-        total_sum = df["total_price"].sum()
+        total_sum = df[total_price].sum()
         pdf.set_font(family="Times", size=10)
         pdf.set_text_color(80, 80, 80)
         pdf.cell(w=30, h=8, txt="", border=1)
@@ -68,17 +72,17 @@ def generate(invoices_path, pdfs_path):
 
         pdf.set_font(family="Times", size=14, style="B")
         pdf.cell(w=25, h=8, txt=f"Python")
-        pdf.image("pythonhow.png", w=10)
+        pdf.image(image_path, w=10)
         # Add company name and logo
 
-        pdf.output(f"PDFS/{filename}.pdf")
+        os.makedirs(pdfs_path)
+        pdf.output(f"{pdfs_path}/{filename}.pdf")
         # f string useful here
         # because we generate files dynamically from multiple files
-
 
         # we create a pdf for each excel
         # that's the logic to use inside for loop
 
     print(df)
-    #reminder prints are good to check step by step the output,
+    # reminder prints are good to check step by step the output,
     # but also actions done correctly
