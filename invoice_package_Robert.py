@@ -1,13 +1,11 @@
 import os
-
 import pandas as pd
 import glob
-# glob is useful here for lists with multiple files
 from fpdf import FPDF
 from pathlib import Path
 
 
-# helps with using filepaths
+
 
 
 def generate(invoices_path, pdfs_path, image_path, product_id, product_name, amount_purchased, price_per_unit, total_price):
@@ -84,5 +82,4 @@ def generate(invoices_path, pdfs_path, image_path, product_id, product_name, amo
         # that's the logic to use inside for loop
 
     print(df)
-    # reminder prints are good to check step by step the output,
-    # but also actions done correctly
+
